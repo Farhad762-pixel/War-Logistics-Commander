@@ -1,79 +1,380 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>WAR LOGISTICS COMMANDER</title>
 
 <style>
 
-body{
+*{
     margin:0;
-    font-family:Arial;
-    background:black;
-    color:white;
-    overflow:hidden;
+    padding:0;
+    box-sizing:border-box;
 }
 
-#background{
+body{
+    font-family:Arial, sans-serif;
+    color:white;
+    overflow-x:hidden;
+    overflow-y:auto;
+
+    background:
+    linear-gradient(rgba(0,0,0,0.82),rgba(0,0,0,0.88)),
+    url('https://images.unsplash.com/photo-1514924013411-cbf25faa35bb?q=80&w=2070&auto=format&fit=crop');
+
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+
+    animation:bgmove 20s linear infinite;
+}
+
+/* DANGER SHAKE */
+
+body.battle{
+    animation:shake 0.2s infinite;
+}
+
+@keyframes shake{
+    0%{transform:translate(1px,1px);}
+    25%{transform:translate(-1px,2px);}
+    50%{transform:translate(2px,-1px);}
+    75%{transform:translate(-2px,1px);}
+    100%{transform:translate(1px,-2px);}
+}
+
+/* MOVING BACKGROUND */
+
+@keyframes bgmove{
+    0%{background-position:center top;}
+    50%{background-position:center center;}
+    100%{background-position:center bottom;}
+}
+
+/* FIRE OVERLAY */
+
+.fire-overlay{
     position:fixed;
     width:100%;
     height:100%;
-    background-image:url('https://images.unsplash.com/photo-1508614589041-895b88991e3e');
-    background-size:cover;
-    background-position:center;
-    filter:brightness(40%);
-    z-index:-1;
+    top:0;
+    left:0;
+    pointer-events:none;
+    background:
+    radial-gradient(circle at bottom,
+    rgba(255,80,0,0.25),
+    transparent 40%);
+    animation:fireflash 2s infinite alternate;
 }
+
+@keyframes fireflash{
+    0%{opacity:0.5;}
+    100%{opacity:1;}
+}
+
+/* SMOKE EFFECT */
+
+.smoke{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    background:
+    radial-gradient(circle,
+    rgba(255,255,255,0.04),
+    transparent 70%);
+    animation:smoke 8s infinite alternate;
+    pointer-events:none;
+}
+
+@keyframes smoke{
+    0%{transform:translateY(0px);}
+    100%{transform:translateY(-20px);}
+}
+
+/* HEADER */
+
+header{
+    text-align:center;
+    padding:40px;
+    background:rgba(0,0,0,0.7);
+    border-bottom:3px solid red;
+    position:relative;
+}
+
+header h1{
+    font-size:65px;
+    color:#ff2e2e;
+    text-shadow:4px 4px 15px black;
+    margin-bottom:15px;
+    animation:redflash 1.5s infinite;
+}
+
+@keyframes redflash{
+    0%{color:#ff2e2e;}
+    50%{color:#ff7b7b;}
+    100%{color:#ff2e2e;}
+}
+
+.tagline{
+    max-width:950px;
+    margin:auto;
+    font-size:22px;
+    line-height:1.8;
+}
+
+/* DANGER WARNING */
+
+.warning{
+    margin-top:20px;
+    color:#ff5555;
+    font-size:22px;
+    font-weight:bold;
+    animation:blink 1s infinite;
+}
+
+@keyframes blink{
+    0%{opacity:1;}
+    50%{opacity:0.3;}
+    100%{opacity:1;}
+}
+
+/* MAIN CONTAINER */
 
 .container{
-    padding:20px;
+    width:92%;
+    max-width:1350px;
+    margin:auto;
+    padding:30px 0;
 }
 
-h1{
-    color:red;
-    font-size:40px;
+/* RESOURCE CARDS */
+
+.resources{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
 }
 
-.stats{
-    background:rgba(0,0,0,0.7);
-    padding:15px;
-    border-radius:10px;
-    width:300px;
+.card{
+    background:rgba(10,10,10,0.9);
+    padding:25px;
+    border-radius:18px;
+    border:2px solid #333;
+    transition:0.3s;
+    text-align:center;
+    box-shadow:0 0 20px rgba(255,0,0,0.2);
+}
+
+.card:hover{
+    transform:scale(1.05);
+    border-color:red;
+    box-shadow:0 0 30px rgba(255,0,0,0.5);
+}
+
+.card h2{
+    color:#ff4444;
+    margin-bottom:10px;
+}
+
+.card p{
+    font-size:38px;
+    font-weight:bold;
+}
+
+/* BATTLEFIELD MAP */
+
+.map{
+    margin-top:45px;
+    position:relative;
+    height:520px;
+
+    background:
+    linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),
+    url('https://images.unsplash.com/photo-1508615070457-7baeba4003ab?q=80&w=2070&auto=format&fit=crop');
+
+    background-size:cover;
+    background-position:center;
+
+    border-radius:20px;
+    overflow:hidden;
+    border:3px solid #333;
+
+    box-shadow:0 0 40px rgba(255,0,0,0.3);
+}
+
+/* ALERT */
+
+.alert{
+    position:absolute;
+    top:20px;
+    left:20px;
+
+    background:red;
+    color:white;
+    padding:14px 24px;
+    border-radius:12px;
+
+    font-weight:bold;
+    font-size:18px;
+
+    animation:blink 1s infinite;
+    box-shadow:0 0 20px red;
+}
+
+/* UNITS */
+
+.unit{
+    position:absolute;
+    background:rgba(0,0,0,0.8);
+    padding:18px;
+    border-radius:15px;
+    border:2px solid #555;
+    font-weight:bold;
+    box-shadow:0 0 20px rgba(255,255,255,0.1);
+}
+
+/* TANK */
+
+.tank{
+    left:5%;
+    bottom:12%;
+
+    animation:tankmove 7s infinite alternate;
+}
+
+@keyframes tankmove{
+    0%{transform:translateX(0px);}
+    100%{transform:translateX(140px);}
+}
+
+/* HELICOPTER */
+
+.air{
+    top:10%;
+    left:35%;
+
+    animation:fly 3s infinite alternate;
+}
+
+@keyframes fly{
+    0%{
+        transform:translateY(0px) rotate(0deg);
+    }
+
+    100%{
+        transform:translateY(-25px) rotate(2deg);
+    }
+}
+
+/* SOLDIERS */
+
+.soldiers{
+    bottom:18%;
+    left:40%;
+
+    animation:soldiermove 4s infinite alternate;
+}
+
+@keyframes soldiermove{
+    0%{transform:translateX(0px);}
+    100%{transform:translateX(30px);}
+}
+
+/* ENEMY */
+
+.enemy{
+    right:10%;
+    top:25%;
+}
+
+/* FRONTLINE */
+
+.frontline{
+    right:15%;
+    bottom:15%;
+}
+
+/* EXPLOSIONS */
+
+.explosion{
+    position:absolute;
+    font-size:70px;
+    animation:explode 1s infinite alternate;
+}
+
+.exp1{
+    top:40%;
+    left:55%;
+}
+
+.exp2{
+    bottom:25%;
+    right:30%;
+}
+
+@keyframes explode{
+    0%{
+        transform:scale(1);
+        opacity:0.7;
+    }
+
+    100%{
+        transform:scale(1.4);
+        opacity:1;
+    }
+}
+
+/* BUTTONS */
+
+.buttons{
+    margin-top:40px;
+    text-align:center;
 }
 
 button{
-    padding:12px;
-    margin:5px;
-    background:red;
-    color:white;
+    padding:16px 34px;
+    margin:12px;
     border:none;
+    border-radius:12px;
+    background:#ff2e2e;
+    color:white;
+    font-size:18px;
     cursor:pointer;
-    border-radius:5px;
-    font-size:16px;
+    transition:0.3s;
+    box-shadow:0 0 15px rgba(255,0,0,0.4);
 }
 
 button:hover{
-    background:darkred;
+    background:#ff6666;
+    transform:scale(1.08);
 }
 
-.log{
-    margin-top:20px;
-    background:rgba(0,0,0,0.7);
-    padding:15px;
-    height:220px;
-    overflow:auto;
-    border-radius:10px;
+/* EVENT BOX */
+
+#eventBox{
+    margin-top:35px;
+    background:rgba(0,0,0,0.85);
+    padding:30px;
+    border-left:6px solid red;
+    border-radius:12px;
+    min-height:120px;
+    font-size:21px;
+    line-height:1.7;
+    box-shadow:0 0 20px rgba(255,0,0,0.2);
 }
 
-.warning{
-    color:yellow;
-}
+/* FOOTER */
 
-.success{
-    color:lightgreen;
-}
-
-.fail{
-    color:red;
+footer{
+    margin-top:60px;
+    text-align:center;
+    padding:25px;
+    background:rgba(0,0,0,0.8);
+    border-top:2px solid #333;
 }
 
 </style>
@@ -81,42 +382,117 @@ button:hover{
 
 <body>
 
-<div id="background"></div>
+<div class="fire-overlay"></div>
+<div class="smoke"></div>
 
-<div class="container">
+<header>
 
 <h1>WAR LOGISTICS COMMANDER</h1>
 
-<h3>Modern War Logistics Simulation</h3>
+<div class="tagline">
+Lead military logistics during a deadly modern war.
+Protect supply convoys, manage battlefield resources,
+survive airstrikes, enemy invasions, and total battlefield chaos.
+</div>
 
-<div class="stats">
+<div class="warning">
+🚨 CRITICAL WAR ZONE — ENEMY AIRSTRIKE ACTIVE 🚨
+</div>
 
-<p>Food: <span id="food">100</span></p>
-<p>Fuel: <span id="fuel">100</span></p>
-<p>Ammunition: <span id="ammo">100</span></p>
-<p>Medical: <span id="medical">100</span></p>
+</header>
 
-<p>Troop Strength: <span id="troops">100</span></p>
+<div class="container">
+
+<div class="resources">
+
+<div class="card">
+<h2>🍞 FOOD</h2>
+<p id="food">100</p>
+</div>
+
+<div class="card">
+<h2>⛽ FUEL</h2>
+<p id="fuel">100</p>
+</div>
+
+<div class="card">
+<h2>💣 AMMO</h2>
+<p id="ammo">100</p>
+</div>
+
+<div class="card">
+<h2>🩺 MEDICAL</h2>
+<p id="medical">100</p>
+</div>
 
 </div>
 
-<br>
+<div class="map">
 
-<button onclick="sendSupply()">Send Supply Convoy</button>
+<div class="alert" id="alertBox">
+⚠ ENEMY MOVEMENT DETECTED
+</div>
 
-<button onclick="safeRoute()">Safe Route</button>
+<div class="unit tank">
+🛡️ TANK DIVISION
+</div>
 
-<button onclick="riskyRoute()">Risky Route</button>
+<div class="unit air">
+🚁 AIR SUPPORT
+</div>
 
-<button onclick="nextRound()">Next Round</button>
+<div class="unit soldiers">
+🪖 GROUND SOLDIERS
+</div>
 
-<div class="log" id="log">
+<div class="unit enemy">
+☠ ENEMY FORCES
+</div>
 
-<p>War has started...</p>
+<div class="unit frontline">
+⚔ FRONTLINE BASE
+</div>
 
+<div class="explosion exp1">
+💥
+</div>
+
+<div class="explosion exp2">
+🔥
 </div>
 
 </div>
+
+<div class="buttons">
+
+<button onclick="sendSupplies()">
+🚚 Send Supplies
+</button>
+
+<button onclick="nextRound()">
+⏭ Next Round
+</button>
+
+<button onclick="playWarSound()">
+🔊 War Sound
+</button>
+
+<button onclick="battleMode()">
+🚨 Battle Mode
+</button>
+
+</div>
+
+<div id="eventBox">
+Welcome Commander. Troops are waiting for emergency supply orders.
+Enemy air activity detected near frontline zones.
+</div>
+
+</div>
+
+<footer>
+WAR LOGISTICS COMMANDER © 2026
+</footer>
 
 <script>
 
@@ -124,152 +500,152 @@ let food = 100;
 let fuel = 100;
 let ammo = 100;
 let medical = 100;
-let troops = 100;
 
-let route = "Safe";
-
-function updateStats(){
+function updateResources(){
 
 document.getElementById("food").innerText = food;
 document.getElementById("fuel").innerText = fuel;
 document.getElementById("ammo").innerText = ammo;
 document.getElementById("medical").innerText = medical;
-document.getElementById("troops").innerText = troops;
 
 }
 
-function addLog(text, className=""){
+/* WARNING */
 
-let log = document.getElementById("log");
+function warning(){
 
-log.innerHTML += `<p class="${className}">${text}</p>`;
+const alertBox = document.getElementById("alertBox");
 
-log.scrollTop = log.scrollHeight;
+alertBox.innerHTML = "🚨 MISSILE DETECTED — TAKE COVER";
 
-}
-
-function safeRoute(){
-
-route = "Safe";
-
-addLog("You selected SAFE route.", "success");
+setTimeout(()=>{
+alertBox.innerHTML = "⚠ ENEMY MOVEMENT DETECTED";
+},3000);
 
 }
 
-function riskyRoute(){
+/* BATTLE SHAKE */
 
-route = "Risky";
+function battleMode(){
 
-addLog("You selected RISKY route.", "warning");
+document.body.classList.add("battle");
+
+setTimeout(()=>{
+document.body.classList.remove("battle");
+},3000);
 
 }
 
-function sendSupply(){
+/* SEND SUPPLIES */
+
+function sendSupplies(){
 
 food -= 10;
 fuel -= 10;
 ammo -= 10;
 medical -= 5;
 
-let random = Math.random();
+document.getElementById("eventBox").innerHTML =
+"🚚 Supply convoy reached frontline successfully. Troops morale increased.";
 
-if(route === "Risky"){
-
-if(random < 0.5){
-
-troops -= 20;
-
-addLog("Enemy airstrike destroyed convoy!", "fail");
-
-}else{
-
-troops += 5;
-
-addLog("Fast delivery successful!", "success");
-
-}
-
-}else{
-
-if(random < 0.2){
-
-troops -= 5;
-
-addLog("Weather delayed supplies.", "warning");
-
-}else{
-
-troops += 3;
-
-addLog("Supplies safely delivered.", "success");
-
-}
-
-}
+updateResources();
 
 checkGame();
 
-updateStats();
-
 }
+
+/* NEXT ROUND */
 
 function nextRound(){
 
-food -= 5;
-fuel -= 5;
-ammo -= 5;
+let random = Math.floor(Math.random()*5);
 
-let randomEvent = Math.random();
+if(random === 0){
 
-if(randomEvent < 0.3){
+warning();
+battleMode();
 
-addLog("Heavy enemy attack on frontline!", "fail");
+document.getElementById("eventBox").innerHTML =
+"☠ Enemy airstrike destroyed supply trucks near frontline.";
 
-troops -= 10;
+fuel -= 20;
+ammo -= 15;
 
 }
 
-else if(randomEvent < 0.6){
+else if(random === 1){
 
-addLog("Troops morale increased.", "success");
+document.getElementById("eventBox").innerHTML =
+"🌧 Heavy storm delayed transportation and damaged food supplies.";
 
-troops += 5;
+food -= 10;
+
+}
+
+else if(random === 2){
+
+document.getElementById("eventBox").innerHTML =
+"🔥 Massive battlefield clash! Ammunition consumed rapidly.";
+
+ammo -= 25;
+
+warning();
+battleMode();
+
+}
+
+else if(random === 3){
+
+document.getElementById("eventBox").innerHTML =
+"✅ Helicopter support protected supply convoy successfully.";
+
+food += 5;
+medical += 5;
 
 }
 
 else{
 
-addLog("Quiet battlefield round.");
+document.getElementById("eventBox").innerHTML =
+"🪖 Reinforcement soldiers arrived at frontline positions.";
+
+fuel -= 5;
+food -= 5;
 
 }
+
+updateResources();
 
 checkGame();
 
-updateStats();
+}
+
+/* WAR SOUND */
+
+function playWarSound(){
+
+let audio = new Audio(
+'https://actions.google.com/sounds/v1/explosions/explosion.ogg'
+);
+
+audio.play();
 
 }
+
+/* GAME OVER */
 
 function checkGame(){
 
-if(food <= 0 || fuel <= 0 || ammo <= 0 || troops <= 0){
+if(food <=0 || fuel <=0 || ammo <=0 || medical <=0){
 
-alert("MISSION FAILED");
-
-location.reload();
-
-}
-
-if(troops >= 150){
-
-alert("YOU WON THE WAR!");
-
-location.reload();
+document.getElementById("eventBox").innerHTML =
+"☠ GAME OVER — The military supply chain collapsed. Frontline troops lost the war.";
 
 }
 
 }
 
-updateStats();
+updateResources();
 
 </script>
 
